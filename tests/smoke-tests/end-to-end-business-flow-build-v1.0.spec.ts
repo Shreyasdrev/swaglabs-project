@@ -1,0 +1,124 @@
+import { test, expect } from '@playwright/test';
+
+test('Verify end to end flow- Business flow build V 1.0', async ({ page }) => {
+  await test.step('Verifing page title',async () => {
+    await page.goto('https://www.saucedemo.com/v1/index.html');
+    const pageTitle = await page.title();
+    console.log('Print page title :', pageTitle)
+    console.log('Page loaded successfully');
+    })
+  await page.locator('[data-test="username"]').click();
+  await page.locator('[data-test="username"]').fill('standard_user');
+  await page.locator('[data-test="password"]').click();
+  await page.locator('[data-test="password"]').fill('secret_sauce');
+  await page.getByRole('button', { name: 'LOGIN' }).click();
+  await expect(page.getByText('Products')).toBeVisible();
+  console.log('Login successful');
+  await page.getByRole('link', { name: 'Sauce Labs Backpack' }).click();
+  await expect(page.getByText('Sauce Labs Backpack')).toBeVisible();
+  const backPack = await page.getByText('Sauce Labs Backpack').textContent();
+  const cleanBackPackName = backPack?.trim().toLowerCase() ?? '';
+  console.log('Product details page loaded successfully');
+  await page.getByText('Sauce Labs Backpack').click();
+  const backPackPrice = await page.getByText('$29.99').textContent();
+  await page.getByText('carry.allTheThings() with the').click();
+  await page.getByRole('button', { name: 'ADD TO CART' }).click();
+  console.log('Add to cart button clicked successfully');
+  await page.getByRole('button', { name: '<- Back' }).click();
+  await page.getByText('$9.99').click();
+  await page.getByRole('link', { name: 'Sauce Labs Bike Light' }).click();
+  await page.getByText('Sauce Labs Bike Light').click();
+  await page.getByText('$').click();
+  await page.getByText('A red light isn\'t the desired').click();
+  await page.getByRole('button', { name: '<- Back' }).click();
+  await page.getByText('A red light isn\'t the desired').click();
+  await page.getByRole('link', { name: '1' }).click();
+  await page.getByText('DESCRIPTION').click();
+  await page.getByText('QTY').click();
+  await page.locator('#cart_contents_container').getByText('1').click();
+  await page.getByRole('link', { name: 'Sauce Labs Backpack' }).click();
+  await page.getByRole('link', { name: '1' }).click();
+  await expect(page.getByText('Sauce Labs Backpack')).toBeVisible();
+  console.log('Product added to cart successfully');
+  const cartPgBackPackName = await page.getByRole('link', { name: 'Sauce Labs Backpack' }).textContent();
+  const cleancartPgBackPackName = cartPgBackPackName?.trim().toLowerCase() ?? '';
+  const cartPgBackPackPrice = await page.getByText('29.99').textContent();
+  const clean = (text: string | null) => text?.replace(/[^0-9.]/g, '').trim() ?? '';
+  //Compare the two values after cleaning
+  expect(clean(backPackPrice)).toBe(clean(cartPgBackPackPrice));
+  console.log('Listed price in products page : ' + backPackPrice);
+  console.log('Listed price in cart page : ' + cartPgBackPackPrice);
+  console.log('The backpack price is the same in both pages');
+  await page.getByRole('link', { name: 'Continue Shopping' }).click();
+  await page.getByRole('link', { name: '1' }).click();
+  await page.getByRole('link', { name: 'CHECKOUT' }).click();
+  await expect(page.getByText('Checkout: Your Information')).toBeVisible();
+  console.log('Checkout page loaded successfully');
+
+  await page.locator('[data-test="firstName"]').click();
+  await page.locator('[data-test="firstName"]').fill('John');
+  console.log('First name entered successfully');
+  await page.locator('[data-test="lastName"]').click();
+  await page.locator('[data-test="lastName"]').fill('F');
+  console.log('Last name entered successfully');
+  await page.locator('[data-test="postalCode"]').click();
+  await page.locator('[data-test="postalCode"]').fill('CF143UZ');
+  await expect(page.locator('[data-test="firstName"]')).toHaveValue('John');
+  await expect(page.locator('[data-test="lastName"]')).toHaveValue('F');
+  await page.locator('[data-test="postalCode"]').click();
+  await expect(page.locator('[data-test="postalCode"]')).toHaveValue('CF143UZ');
+  console.log('Postal code entered successfully');
+
+  await page.getByRole('link', { name: 'CANCEL' }).click();
+  console.log('Cancel button clicked successfully');
+  await expect(page.getByText('Your Cart')).toBeVisible();
+  console.log('Navigated back to cart page successfully');
+  await page.getByRole('link', { name: 'CHECKOUT' }).click();
+  console.log('Checkout button clicked successfully');
+
+  await page.locator('[data-test="firstName"]').click();
+  await page.locator('[data-test="firstName"]').fill('John');
+  console.log('First name entered successfully');
+  await page.locator('[data-test="lastName"]').click();
+  await page.locator('[data-test="lastName"]').fill('F');
+  console.log('Last name entered successfully');
+  await page.locator('[data-test="postalCode"]').click();
+  await page.locator('[data-test="postalCode"]').fill('CF143UZ');
+  await expect(page.locator('[data-test="firstName"]')).toHaveValue('John');
+  await expect(page.locator('[data-test="lastName"]')).toHaveValue('F');
+  await page.locator('[data-test="postalCode"]').click();
+  await expect(page.locator('[data-test="postalCode"]')).toHaveValue('CF143UZ');
+  console.log('Postal code entered successfully');
+
+
+  await page.getByRole('button', { name: 'CONTINUE' }).click();
+  console.log('Continue button clicked successfully');
+  await expect(page.getByText('Checkout: Overview')).toBeVisible();
+  console.log('Checkout overview page loaded successfully');
+  const chkPgBackPackName = await page.getByText('Sauce Labs Backpack').textContent();
+  const cleanChkPgBackPackName = chkPgBackPackName?.trim().toLowerCase() ?? '';
+  expect(cleanChkPgBackPackName).toBe(cleanBackPackName);
+  console.log('Product name in products page : ' + cleanBackPackName);
+  console.log('Product name in checkout page : ' + cleanChkPgBackPackName);
+  console.log('Product name in checkout page is correct');
+  const chkPgBackPackPrice = await page.getByText('$29.99', { exact: true }).textContent();
+  const itemPrice = await page.getByText('Item total: $').textContent();
+  const itemTax = await page.getByText('Tax: $').textContent();
+  const itemTotal = await page.getByText('Total: $32.39').textContent();
+  const cItemPrice = clean(itemPrice);
+  const cItemTax = clean(itemTax);
+  const cItemTotal = parseFloat(clean(itemTotal));
+  expect(clean(chkPgBackPackPrice)).toBe(clean(itemPrice));
+  console.log('Listed price in product page : ' + backPackPrice);
+  console.log('Listed price in checkout page : ' + chkPgBackPackPrice);
+  console.log('The backpack price is the same in both pages');
+  const actualItemTotal = parseFloat(cItemPrice) + parseFloat(cItemTax);
+  expect(cItemTotal).toBeCloseTo(actualItemTotal, 2);
+  console.log('Item price : ' + itemPrice, 'Item tax : ' + itemTax, 'Expected Item total : ' + itemTotal, 'Actual Item total : ' + actualItemTotal);
+  console.log('Item total is correct');
+  await page.getByRole('link', { name: 'FINISH' }).click();
+  console.log('Finish button clicked successfully');
+  await page.getByRole('heading', { name: 'THANK YOU FOR YOUR ORDER' }).click();
+  await expect(page.getByText('Your order has been')).toBeVisible();
+  console.log('Order confirmation message is visible');
+});
