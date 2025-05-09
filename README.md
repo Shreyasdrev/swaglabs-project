@@ -34,7 +34,7 @@ All the tests will execute in 3 browsers Chrome, Firefox and Webkit
 
 For HTML test report, run: **npx playwright show-report** 
 
-or manually open: click on playwright-reports=> index.html=> open with live serve
+or manually open: **click on playwright-reports=> index.html=> Open with Live Server**
 
 *Optionally, you can configure Allure Reporting for visual insights such as pie charts and enhanced test results*.
 
